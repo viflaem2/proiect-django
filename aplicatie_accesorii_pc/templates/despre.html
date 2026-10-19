@@ -1,0 +1,26 @@
+{% extends "baza.html" %}
+{% load static %}
+{% block title %}Despre noi{% endblock %}
+{% block content %}
+<h1>Despre noi</h1>
+<section id="cine-suntem">
+    <h2>Cine suntem 🙂</h2>
+    <p>
+        Suntem un magazin de accesorii PC pentru cei care vor produse care arata bine, sunt practice si au preturi accesibile. 
+        Ne place sa ne aranjam setup-ul 😎 si stim cat conteaza sa gasesti ceva pe gustul tau. 
+        Fie ca te joci, lucrezi de acasa sau iei laptopul cu tine peste tot, vrem sa gasesti aici accesoriile potrivite.
+    </p>
+</section>
+<section id="ce-oferim">
+    <h2>Ce oferim</h2>
+    <p>
+        😊 La noi gasesti mouse-uri, tastaturi, casti, adaptoare, mousepad-uri, camere web si microfoane.
+    </p>
+    <ul>
+        <li><strong>Gaming:</strong> tastaturi cu iluminare, mouse-uri, casti si mousepad-uri pentru setup-ul tau. Stim ca si aspectul conteaza 😉.</li>
+        <li><strong>Office:</strong> tastaturi silentioase, mouse-uri ergonomice si camere web pentru munca de zi cu zi. Sedintele nu le putem scurta 😅, dar macar te poti auzi si vedea bine.</li>
+        <li><strong>Travel:</strong> mouse-uri wireless, casti usor de transportat si adaptoare compacte. Mai putin loc ocupat in rucsac 😌, mai mult loc pentru restul lucrurilor.</li>
+    </ul>
+</section>
+<img src="{% static 'imagini/meme.jpg' %}" width="400">
+{% endblock %}

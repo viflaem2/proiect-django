@@ -1,0 +1,26 @@
+@import url("nav.css");
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+footer {
+  padding: 15px;
+  background-color: white;
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+footer p {
+  margin: 0;
+}

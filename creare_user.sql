@@ -1,0 +1,3 @@
+CREATE USER "django_user" WITH ENCRYPTED PASSWORD 'postgres';
+CREATE SCHEMA IF NOT EXISTS django;
+GRANT ALL ON SCHEMA django TO "django_user";

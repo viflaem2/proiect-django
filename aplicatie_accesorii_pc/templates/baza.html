@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}Pagina mea{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/stil.css' %}">
+    </head>
+    <body>
+        <header>
+            <a href="{% url 'index' %}"><img src="{% static 'imagini/Conectel.png' %}" width="160"></a>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{% url 'index' %}">Acasa</a>
+                        <ul>
+                            <li><a href="{% url 'index' %}#prezentare">Prezentare</a></li>
+                            <li><a href="{% url 'index' %}#categorii">Categorii</a></li>
+                            <li><a href="{% url 'index' %}#recomandate">Produse recomandate</a></li>
+                            <li><a href="{% url 'index' %}#producatori">Producatori</a></li>
+                            <li><a href="{% url 'index' %}#conexiuni">Ghid de conexiuni</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{% url 'produse' %}">Produse</a></li>
+                    <li><a href="{% url 'cos_virtual' %}">Cos virtual</a></li>
+                    <li><a href="{% url 'istoric' %}">Istoric</a></li>
+                    <li><a href="{% url 'despre' %}">Despre</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
+                    <li><a href="{% url 'faq' %}">FAQ</a></li>
+                    <li><a href="{% url 'termeni' %}">Termeni si conditii</a></li>
+                </ul>
+            </nav>
+        </header>       
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        <footer>
+            <p>© {% now "Y" %} {{ detalii_firma.nume }}</p>
+            <p>Infiintat la: {{ detalii_firma.data_infiintare }}</p>
+            <p>Telefon: {{ detalii_firma.telefon }}</p>
+            <p>Adresa: {{ detalii_firma.adresa }}</p>
+            <p>Email: {{ detalii_firma.email }}</p>
+            <p>Program: {{ detalii_firma.program_lucru }}</p>
+        </footer>
+    </body>
+</html>
