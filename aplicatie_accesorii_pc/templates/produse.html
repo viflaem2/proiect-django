@@ -1,0 +1,19 @@
+{% extends "baza.html" %}
+{% block title %}Produse{% endblock %}
+{% block content %}
+<h1>Produse</h1>
+{% if eroare %}
+    <p>{{ eroare }}</p>
+{% else %}
+    <span>Pagina {{ pagina.number }} din {{ pagina.paginator.num_pages }}.</span>
+    {% for prod in pagina.object_list %}
+        <p>{{ prod }}</p>
+    {% endfor %}
+    {% if pagina.has_previous %}
+        <a href="?pagina={{ pagina.previous_page_number }}">« Anterior</a>
+    {% endif %}
+    {% if pagina.has_next %}
+        <a href="?pagina={{ pagina.next_page_number }}">Urmator »</a>
+    {% endif %}
+{% endif %}
+{% endblock %}

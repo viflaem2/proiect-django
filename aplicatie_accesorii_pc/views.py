@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .models import Produs
 from django.http import HttpResponse
 from datetime import datetime
 import locale
@@ -61,9 +63,26 @@ def despre(request):
     a=access(request)
     return render(request,"despre.html")
 
-def produse(request):
+def afis_produse(request):
     a=access(request)
-    return render(request,"in_lucru.html")
+    nrPagina=request.GET.get("pagina",1)
+    produse=Produs.objects.all()
+    paginator=Paginator(produse, 5)
+    mesajEroare=None
+    try:
+        obPagina = paginator.page(nrPagina)
+    except EmptyPage:
+        obPagina=None
+        mesajEroare = "Nu mai sunt produse"
+    except PageNotAnInteger: # veti trata situatia in care nu e dat un numar intreg
+        obPagina=None
+        mesajEroare = "Numarul paginii trebuie sa fie un numar intreg"
+    return render(request, 'produse.html',
+                    {
+                        'pagina': obPagina,
+                        'eroare': mesajEroare
+                    }
+    )
 
 def contact(request):
     a=access(request)
