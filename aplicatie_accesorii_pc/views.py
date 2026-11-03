@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Produs
+from .models import Produs, Categorie
 from django.http import HttpResponse
 from datetime import datetime
 import locale
+from django.conf import settings
 
 class Accesare:
     contor=1
@@ -47,65 +48,107 @@ def access(request):
 
 def index(request):
     a=access(request)
-    return render(request,"index.html")
+    return render(request,"aplicatie_accesorii_pc/index.html")
 
 def info(request):
     a=access(request)
-    return render(request,"info.html",
+    return render(request,"aplicatie_accesorii_pc/info.html",
         {"data":a.calculeaza_data(tip=a.parametri.get("data"))}
     )
 
 def istoric(request):
     a=access(request)
-    return render(request,"istoric.html")
+    return render(request,"aplicatie_accesorii_pc/istoric.html")
 
 def despre(request):
     a=access(request)
-    return render(request,"despre.html")
+    return render(request,"aplicatie_accesorii_pc/despre.html")
 
-def afis_produse(request):
+def afis_produse(request,nume_categorie=None):
     a=access(request)
     nrPagina=request.GET.get("pagina",1)
-    produse=Produs.objects.all()
-    paginator=Paginator(produse, 5)
+    coloana=request.GET.get("coloana", "denumire")
+    ordine=request.GET.get("ordine", "a")
+    if coloana not in ["denumire", "pret", "stoc"]:
+        coloana="denumire"
+    if ordine=="d":
+        produse=Produs.objects.order_by("-"+coloana)
+    else:
+        produse=Produs.objects.order_by(coloana)
+    taguri=request.GET.getlist("tag")
+    if taguri:
+        produse=produse.filter(taguri__contains=taguri)
+    if nume_categorie:
+        produse=produse.filter(categorie__nume=nume_categorie)
+    paginator=Paginator(produse, settings.PROD_PER_PAG)
     mesajEroare=None
     try:
         obPagina = paginator.page(nrPagina)
     except EmptyPage:
         obPagina=None
         mesajEroare = "Nu mai sunt produse"
-    except PageNotAnInteger: # veti trata situatia in care nu e dat un numar intreg
+    except PageNotAnInteger: 
         obPagina=None
         mesajEroare = "Numarul paginii trebuie sa fie un numar intreg"
-    return render(request, 'produse.html',
+    parametri=request.GET.copy()
+    parametri.pop("pagina",None)
+    butoane=[]
+    for tag in taguri:
+        params=parametri.copy()
+        params.setlist("tag", [t for t in taguri if t!=tag])
+        butoane.append((tag, params.urlencode()))
+    categorie=None
+    if nume_categorie:
+        try:
+            categorie=Categorie.objects.get(nume=nume_categorie)
+        except Categorie.DoesNotExist:
+            return HttpResponse("Categoria nu exista.", status=404)
+    return render(request, 'aplicatie_accesorii_pc/produse.html',
                     {
                         'pagina': obPagina,
-                        'eroare': mesajEroare
+                        'eroare': mesajEroare,
+                        'parametri': parametri.urlencode(),
+                        'butoane' : butoane,
+                        'categorie': categorie
                     }
     )
+def afis_produs(request, id):
+    a=access(request)
+    try:
+        produs = Produs.objects.get(pk=id)
+    except Produs.DoesNotExist:
+        return HttpResponse("Produsul nu exista.", status=404)
+    similare = Produs.objects.raw("""
+        SELECT *
+        FROM aplicatie_accesorii_pc_produs
+        WHERE id_categorie = %s AND id_produs != %s
+        ORDER BY RANDOM()
+        LIMIT 3
+    """, [produs.categorie_id, produs.pk])
+    return render(request, "aplicatie_accesorii_pc/produs.html", {"produs": produs, "similare": similare})
 
 def contact(request):
     a=access(request)
-    return render(request,"in_lucru.html")
+    return render(request,"aplicatie_accesorii_pc/in_lucru.html")
 
 def cos_virtual(request):
     a=access(request)
-    return render(request,"in_lucru.html")
+    return render(request,"aplicatie_accesorii_pc/in_lucru.html")
 
 def faq(request):
     a=access(request)
-    return render(request,"in_lucru.html")
+    return render(request,"aplicatie_accesorii_pc/in_lucru.html")
 
 def termeni(request):
     a=access(request)
-    return render(request,"in_lucru.html")
+    return render(request,"aplicatie_accesorii_pc/in_lucru.html")
 
 def accesare(request,id):
     a=access(request)
     for obiect in accesari:
         if obiect.id==int(id):
-            return render(request,"accesare.html",{"obiect":str(obiect).replace('\n','<br>')})
-    return render(request,"accesare.html",{"obiect":"Accesarea nu exista"})
+            return render(request,"aplicatie_accesorii_pc/accesare.html",{"obiect":str(obiect).replace('\n','<br>')})
+    return render(request,"aplicatie_accesorii_pc/accesare.html",{"obiect":"Accesarea nu exista"})
 
 def log(request):
     a=access(request)
@@ -135,13 +178,13 @@ def log(request):
         else:
             lista=accesari[-ult:]
     else:
-        return render(request,"log.html",{"pagina":"<p>Eroare: ultimele trebuie sa fie un numar intreg nenul</p>"})
+        return render(request,"aplicatie_accesorii_pc/log.html",{"pagina":"<p>Eroare: ultimele trebuie sa fie un numar intreg nenul</p>"})
     if "iduri" in a.parametri:
         iduri=[]
         for grup in a.parametri.getlist("iduri"):
             for id in grup.split(","):
                 if not id.isdecimal():
-                    return render(request,"log.html",{"pagina":"<p>Eroare: iduri trebuie sa contina numere intregi separate prin virgula</p>"})
+                    return render(request,"aplicatie_accesorii_pc/log.html",{"pagina":"<p>Eroare: iduri trebuie sa contina numere intregi separate prin virgula</p>"})
                 iduri.append(int(id))
         dubluri=a.parametri.get("dubluri","false")
         selectate=[]
@@ -194,4 +237,4 @@ def log(request):
     for nume in a.parametri:
         pagina+=f"<li>{nume}</li>"
     pagina+="</ul>"
-    return render(request,"log.html",{"pagina":pagina})
+    return render(request,"aplicatie_accesorii_pc/log.html",{"pagina":pagina})

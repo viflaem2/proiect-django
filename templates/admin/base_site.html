@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}{{ title }} | {{ site_title }}{% endblock %}
+{% block branding %}
+<div id="site-name">
+    <img src="{% static 'imagini/Conectel2.png' %}" width="80" style="position: relative; top: 10px;">
+    <a href="{% url 'admin:index' %}">{{ site_header }}
+    </a>
+</div>
+{% endblock %}
+{% block extrahead %}
+{{ block.super }}
+<style>
+    :root, html[data-theme] {
+        --primary: #713D4A;
+        --secondary: #512B35;
+        --primary-fg: #ffffff;
+        --body-bg: #000000;
+        --body-fg: #eeeeee;
+        --body-quiet-color: #cccccc;
+        --body-loud-color: #ffffff;
+        --breadcrumbs-bg: #512B35;
+        --selected-row: #3D2028;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "aplicatie_accesorii_pc/baza.html" %}
+{% load static %}
+{% block title %}{{ produs.denumire }}{% endblock %}
+{% block content %}
+    <div class="produs produs-detalii">
+        <h1>{{ produs.denumire }}</h1>
+        {% for imagine in produs.imagineprodus_set.all %}
+            <img src="{{ imagine.cale_imagine.url }}" alt="{{ imagine.text_alternativ|default:produs.denumire }}">
+        {% empty %}
+            <img src="{% static 'imagini/imagine-indisponibila.webp' %}" alt="Imagine indisponibila">
+        {% endfor %}
+        <p>Descriere: {{ produs.descriere|default:"Nespecificata" }}</p>
+        {% if produs.categorie %}
+            <p>Categorie:
+                <a class="categorie-link" href="{% url 'categorie' produs.categorie.nume %}" style="color: {{ produs.categorie.culoare }};">
+                    {% if produs.categorie.sigla %}
+                        <img class="categorie-sigla" src="{{ produs.categorie.sigla.url }}" alt="">
+                    {% endif %}
+                    {{ produs.categorie.nume }}
+                </a>
+            </p>
+        {% else %}
+            <p>Categorie: Nespecificata</p>
+        {% endif %}
+        <p>Furnizor: {{ produs.furnizor|default:"Nespecificat" }}</p>
+        <p>Producator: {{ produs.furnizor.producator|default:"Nespecificat" }}</p>
+        <p>Pret: {{ produs.pret }} lei</p>
+        <p>Stoc: {{ produs.stoc }}</p>
+        {% if produs.stoc < stoc_min %}
+            <p>Stoc limitat</p>
+        {% endif %}
+        <p>Wireless: {{ produs.wireless|yesno:"Da,Nu" }}</p>
+        <p>Data lansare: {{ produs.data_lansare|date:"d.m.Y H:i"|default:"Nespecificata" }}</p>
+        <p>Garantie: {{ produs.garantie_luni }} luni</p>
+        <p>Greutate: {% if produs.greutate_g != None %}{{ produs.greutate_g }} g{% else %}Nespecificata{% endif %}</p>
+        <p>Culori disponibile: {{ produs.culori_disponibile|join:", "|default:"Nespecificate" }}</p>
+        {% with conexiuni=produs.conexiuni.all %}
+            <p>Conexiuni: {{ conexiuni|join:", "|default:"Nespecificate" }}</p>
+        {% endwith %}
+        {% for tag in produs.taguri %}
+            <a href="{% url 'produse' %}?{{ parametri }}&amp;tag={{ tag|urlencode }}">{{ tag }}</a>
+        {% endfor %}
+    </div>
+    <div>
+        <h2>Produse din aceeasi categorie</h2>
+        <div class="lista-produse">
+            {% for similar in similare %}
+                <div class="produs">
+                    <a href="{{ similar.get_absolute_url }}">
+                        <h3>{{ similar.denumire }}</h3>
+                        {% with imagine=similar.imagineprodus_set.first %}
+                            {% if imagine %}
+                                <img src="{{ imagine.cale_imagine.url }}" alt="{{ similar.denumire }}">
+                            {% else %}
+                                <img src="{% static 'imagini/imagine-indisponibila.webp' %}" alt="Imagine indisponibila">
+                            {% endif %}
+                        {% endwith %}
+                        <p>{{ similar.pret }} lei</p>
+                    </a>
+                </div>
+            {% empty %}
+                <p>Nu exista alte produse in aceasta categorie.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

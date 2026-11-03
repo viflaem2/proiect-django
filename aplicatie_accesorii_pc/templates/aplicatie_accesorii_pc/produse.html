@@ -1,0 +1,72 @@
+{% extends "aplicatie_accesorii_pc/baza.html" %}
+{% load static %}
+{% block title %}{{ categorie.nume|default:"Produse" }}{% endblock %}
+{% block content %}
+{% if categorie %}
+    <div class="categorie-prezentare">
+        {% if categorie.sigla %}
+            <img src="{{ categorie.sigla.url }}" alt="{{ categorie.nume }}">
+        {% endif %}
+        <h1 style="color: {{ categorie.culoare }};">{{ categorie.nume }}</h1>
+        <p>{{ categorie.descriere|default:"" }}</p>
+    </div>
+{% else %}
+    <h1>Produse</h1>
+{% endif %}
+{% if eroare %}
+    <p>{{ eroare }}</p>
+{% else %}
+    <p>Se afiseaza produsele intre {{ pagina.start_index }} si {{ pagina.end_index }} din totalul de {{ pagina.paginator.count }} produse.</p>
+    <span>Pagina {{ pagina.number }} din {{ pagina.paginator.num_pages }}.</span>
+    {% if pagina.has_previous %}
+        <a href="?pagina={{ pagina.previous_page_number }}&amp;{{ parametri }}">« Anterior</a>
+    {% endif %}
+    {% if pagina.has_next %}
+        <a href="?pagina={{ pagina.next_page_number }}&amp;{{ parametri }}">Urmator »</a>
+    {% endif %}
+    {% for tag, params in butoane %}
+        <a href="?{{ params }}">{{ tag }} ×</a>
+    {% endfor %}
+    <div class="lista-produse">
+        {% for prod in pagina.object_list %}
+            <div class=produs>
+                <p><a href="{{ prod.get_absolute_url }}">{{ prod.denumire }}</a></p>
+                {% with imagine=prod.imagineprodus_set.first%}
+                    {%if imagine%}
+                        <img src="{{imagine.cale_imagine.url}}" width=150>
+                    {% else %}
+                        <img src={% static 'imagini/imagine-indisponibila.webp' %} width=150>
+                    {% endif %}
+                {% endwith %}
+                {% if prod.categorie %}
+                    <p>Categorie:
+                        <a class="categorie-link" href="{% url 'categorie' prod.categorie.nume %}" style="color: {{ prod.categorie.culoare }};">
+                            {% if prod.categorie.sigla %}
+                                <img class="categorie-sigla" src="{{ prod.categorie.sigla.url }}">
+                            {% endif %}
+                            {{ prod.categorie.nume }}
+                        </a>
+                    </p>
+                {% else %}
+                    <p>Categorie: Nespecificata</p>
+                {% endif %}
+                <p>Pret: {{ prod.pret }} lei</p>
+                <p>Stoc: {{ prod.stoc }}</p>
+                {% if prod.stoc < stoc_min %}
+                    <p>Stoc limitat</p>
+                {% endif %}
+                {% for tag in prod.taguri %}
+                    <a href="?{{ parametri }}&amp;tag={{ tag|urlencode }}">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    <span>Pagina {{ pagina.number }} din {{ pagina.paginator.num_pages }}.</span>
+    {% if pagina.has_previous %}
+        <a href="?pagina={{ pagina.previous_page_number }}&amp;{{ parametri }}">« Anterior</a>
+    {% endif %}
+    {% if pagina.has_next %}
+        <a href="?pagina={{ pagina.next_page_number }}&amp;{{ parametri }}">Urmator »</a>
+    {% endif %}
+{% endif %}
+{% endblock %}

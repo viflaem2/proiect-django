@@ -24,3 +24,45 @@ footer {
 footer p {
   margin: 0;
 }
+
+.lista-produse {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.produs {
+  border: 2px solid #009b84;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: white;
+}
+
+.produs img {
+  width: 200px;
+  height: 160px;
+  object-fit: contain;
+}
+
+.produs-detalii {
+  max-width: 700px;
+  margin: 20px 0;
+}
+
+.categorie-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.produs img.categorie-sigla {
+  width: 32px;
+  height: 32px;
+}
+
+.categorie-prezentare img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}

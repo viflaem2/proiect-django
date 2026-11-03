@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField
+from django.urls import reverse
 
 class Producator(models.Model):
     id_producator = models.AutoField(primary_key=True)
@@ -19,7 +20,7 @@ class Categorie(models.Model):
         OFFICE = 'office', 'Office'
         TRAVEL = 'travel', 'Travel'
     id_categorie = models.AutoField(primary_key=True)
-    nume = models.CharField(max_length=255)
+    nume = models.CharField(max_length=255, unique=True)
     descriere = models.TextField(blank=True, null=True)
     culoare = models.CharField(max_length=50, blank=True, null=True, help_text="Culoarea categoriei in format hexazecimal, de exemplu #009b84.")
     sigla = models.ImageField(upload_to="categorii/", max_length=255, blank=True, null=True, help_text="Imagine reprezentativa pentru categorie.")
@@ -69,6 +70,7 @@ class Produs(models.Model):
     garantie_luni = models.SmallIntegerField(default=12)
     greutate_g = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     culori_disponibile = ArrayField(models.CharField(max_length=50), blank=True, null=True, help_text="Introduceti culorile separate prin virgula, de exemplu negru,alb,rosu.")
+    taguri = ArrayField(models.CharField(max_length=50), default=list, blank=True)
     conexiuni = models.ManyToManyField(TipConexiune)
     class Meta:
         indexes = [
@@ -86,6 +88,8 @@ class Produs(models.Model):
         ]
     def __str__(self):
         return self.denumire
+    def get_absolute_url(self):
+            return reverse("produs", kwargs={"id": self.pk}) #self.pk e primary key
 
 class ImagineProdus(models.Model):
     produs = models.ForeignKey(Produs, on_delete=models.CASCADE, db_column='id_produs')

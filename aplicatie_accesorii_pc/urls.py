@@ -14,4 +14,6 @@ urlpatterns = [
     path('faq', views.faq, name='faq'),
     path('termeni', views.termeni, name='termeni'),
     re_path(r'^accesare(?P<id>\d+)$', views.accesare, name='accesare'),
+    re_path(r'^produs/(?P<id>\d+)$', views.afis_produs, name='produs'),
+    re_path(r'^categorii/(?P<nume_categorie>[^/]+)$', views.afis_produse, name='categorie'),
 ]
