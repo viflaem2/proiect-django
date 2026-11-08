@@ -1,0 +1,68 @@
+{% extends "aplicatie_accesorii_pc/baza.html" %}
+{% block title %}Editare date{%endblock%}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <h1>Editare date</h1>
+    <div>
+        {{ form.username.label_tag }} {{ form.username }}
+        {{ form.username.errors }}
+    </div>
+    <div>
+        {{ form.first_name.label_tag }} {{ form.first_name }}
+        {{ form.first_name.errors }}
+    </div>
+    <div>
+        {{ form.last_name.label_tag }} {{ form.last_name }}
+        {{ form.last_name.errors }}
+    </div>
+    <div>
+        {{ form.email.label_tag }} {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+    <div>
+        {{ form.telefon.label_tag }} {{ form.telefon }}
+        {{ form.telefon.errors }}
+    </div>
+    <div>
+        {{ form.tara.label_tag }} {{ form.tara }}
+        {{ form.tara.errors }}
+    </div>
+    <div>
+        {{ form.localitate.label_tag }} {{ form.localitate }}
+        {{ form.localitate.errors }}
+    </div>
+    <div>
+        {{ form.abonat_newsletter.label_tag }} {{ form.abonat_newsletter }}
+        {{ form.abonat_newsletter.errors }}
+    </div>
+    <h3>Profil (optional)</h3>
+    <div>
+        {{ form.judet.label_tag }} {{ form.judet }}
+        {{ form.judet.errors }}
+    </div>
+    <div>
+        {{ form.strada.label_tag }} {{ form.strada }}
+        {{ form.strada.errors }}
+    </div>
+    <div>
+        {{ form.numar.label_tag }} {{ form.numar }}
+        {{ form.numar.errors }}
+    </div>
+    <div>
+        {{ form.bloc.label_tag }} {{ form.bloc }}
+        {{ form.bloc.errors }}
+    </div>
+    <div>
+        {{ form.apartament.label_tag }} {{ form.apartament }}
+        {{ form.apartament.errors }}
+    </div>
+    <div>
+        {{ form.cod_postal.label_tag }} {{ form.cod_postal }}
+        {{ form.cod_postal.errors }}
+    </div>
+    <button type="submit">Salveaza</button>
+</form>
+<p><a href="{% url 'profil' %}">Inapoi la profil</a></p>
+{% endblock %}

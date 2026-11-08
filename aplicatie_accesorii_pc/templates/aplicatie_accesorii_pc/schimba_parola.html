@@ -1,0 +1,23 @@
+{% extends "aplicatie_accesorii_pc/baza.html" %}
+{% block title %}Schimba parola{% endblock %}
+{% block content %}
+<h1>Schimba parola</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+        {{ form.old_password.label_tag }} {{ form.old_password }}
+        {{ form.old_password.errors }}
+    </div>
+    <div>
+        {{ form.new_password1.label_tag }} {{ form.new_password1 }}
+        {{ form.new_password1.errors }}
+    </div>
+    <div>
+        {{ form.new_password2.label_tag }} {{ form.new_password2 }}
+        {{ form.new_password2.errors }}
+    </div>
+    <button type="submit">Schimba parola</button>
+</form>
+<p><a href="{% url 'profil' %}">Inapoi la profil</a></p>
+{% endblock %}

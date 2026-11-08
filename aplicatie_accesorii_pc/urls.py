@@ -16,4 +16,10 @@ urlpatterns = [
     re_path(r'^accesare(?P<id>\d+)$', views.accesare, name='accesare'),
     re_path(r'^produs/(?P<id>\d+)$', views.afis_produs, name='produs'),
     re_path(r'^categorii/(?P<nume_categorie>[^/]+)$', views.afis_produse, name='categorie'),
+    path('register', views.register_view, name='register'),
+    path('login', views.login_view, name='login'),
+    path('logout', views.logout_view, name='logout'),
+    path('profil', views.profil, name='profil'),
+    path('schimba_parola', views.schimba_parola, name='schimba_parola'),
+    path('editare_date', views.editare_date, name='editare_date'),
 ]

@@ -1,0 +1,25 @@
+{% extends "aplicatie_accesorii_pc/baza.html" %}
+{% block title %}Profil{%endblock%}
+{% block content %}
+<h2>Datele contului</h2>
+<p>Username: {{ utilizator.username }}</p>
+<p>Nume: {{ utilizator.last_name }}</p>
+<p>Prenume: {{ utilizator.first_name }}</p>
+<p>Email: {{ utilizator.email }}</p>
+<p>Telefon: {{ utilizator.telefon }}</p>
+<p>Tara: {{ utilizator.tara }}</p>
+<p>Localitate: {{ utilizator.localitate }}</p>
+<p>Newsletter: {{ utilizator.abonat_newsletter|yesno:"Da,Nu" }}</p>
+<p>Data inregistrarii: {{ utilizator.data_inregistrarii }}</p>
+<h2>Profil</h2>
+{% if profil %}
+    <p>Judet: {{ profil.judet|default:"-" }}</p>
+    <p>Strada: {{ profil.strada|default:"-" }}</p>
+    <p>Numar: {{ profil.numar|default:"-" }}</p>
+    <p>Bloc: {{ profil.bloc|default:"-" }}</p>
+    <p>Apartament: {{ profil.apartament|default:"-" }}</p>
+    <p>Cod postal: {{ profil.cod_postal|default:"-" }}</p>
+{% endif %}
+<p><a href="{% url 'schimba_parola' %}">Schimba parola</a></p>
+<p><a href="{% url 'editare_date' %}">Editeaza datele contului</a></p>
+{% endblock %}

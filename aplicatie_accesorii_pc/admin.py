@@ -1,9 +1,10 @@
 import csv
 import json
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.http import HttpResponse
 from django.utils.html import format_html
-from .models import Producator, Categorie, Furnizor, TipConexiune, Produs, ImagineProdus
+from .models import Producator, Categorie, Furnizor, TipConexiune, Produs, ImagineProdus, Utilizator, Profil, Departament, Angajat, Curier, Voucher, Comanda, Recenzie
 
 class ProducatorAdmin(admin.ModelAdmin):
     search_fields = ("denumire", "tara_origine")
@@ -64,6 +65,17 @@ class ProdusAdmin(admin.ModelAdmin):
         json.dump(produse, response, ensure_ascii=False, indent=4)
         return response
 
+class UtilizatorAdmin(UserAdmin):
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Date personale', {'fields': ('first_name', 'last_name', 'email', 'telefon', 'tara', 'localitate', 'abonat_newsletter')}),
+        ('Permisiuni', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Date importante', {'fields': ('last_login', 'data_inregistrarii')}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Date personale', {'fields': ('first_name', 'last_name', 'email', 'telefon', 'tara', 'localitate', 'abonat_newsletter')}),
+    )
+
 admin.site.site_header = "Conectel Database"
 admin.site.site_title = "Conectel Database"
 admin.site.index_title = "Conectel Administration"
@@ -74,3 +86,11 @@ admin.site.register(Furnizor, FurnizorAdmin)
 admin.site.register(TipConexiune, TipConexiuneAdmin)
 admin.site.register(Produs, ProdusAdmin)
 admin.site.register(ImagineProdus, ImagineProdusAdmin)
+admin.site.register(Utilizator, UtilizatorAdmin)
+admin.site.register(Profil)
+admin.site.register(Departament)
+admin.site.register(Angajat)
+admin.site.register(Curier)
+admin.site.register(Voucher)
+admin.site.register(Comanda)
+admin.site.register(Recenzie)

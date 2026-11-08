@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Produs, Categorie
+from .models import Produs, Categorie, Profil
 from django.http import HttpResponse
 from datetime import datetime
-import locale
 from django.conf import settings
+from .forms import LoginForm, RegisterForm, EditareDateForm
+from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+import locale
 
 class Accesare:
     contor=1
@@ -112,6 +115,7 @@ def afis_produse(request,nume_categorie=None):
                         'categorie': categorie
                     }
     )
+
 def afis_produs(request, id):
     a=access(request)
     try:
@@ -238,3 +242,94 @@ def log(request):
         pagina+=f"<li>{nume}</li>"
     pagina+="</ul>"
     return render(request,"aplicatie_accesorii_pc/log.html",{"pagina":pagina})
+
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = RegisterForm()
+    return render(request, 'aplicatie_accesorii_pc/inregistrare.html', {'form': form})
+
+def memoreaza_date_cont(request, user):
+    request.session["date_utilizator"] = {
+        "username": user.username,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email,
+        "telefon": user.telefon,
+        "tara": user.tara,
+        "localitate": user.localitate,
+        "abonat_newsletter": user.abonat_newsletter,
+        "data_inregistrarii": user.data_inregistrarii.isoformat()}        
+    try:
+        profil = Profil.objects.get(utilizator=user)
+        request.session["date_profil"] = {
+            "judet": profil.judet,
+            "strada": profil.strada,
+            "numar": profil.numar,
+            "bloc": profil.bloc,
+            "apartament": profil.apartament,
+            "cod_postal": profil.cod_postal
+        }
+    except Profil.DoesNotExist:
+        request.session["date_profil"] = None
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST, request=request)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if not form.cleaned_data.get('ramane_logat'):
+                request.session.set_expiry(0)
+            else:
+                request.session.set_expiry(24*60*60)         
+            memoreaza_date_cont(request, user)
+            return redirect('profil')
+    else:
+        form = LoginForm()
+
+    return render(request, 'aplicatie_accesorii_pc/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+def profil(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    utilizator = request.session.get("date_utilizator")
+    profil= None
+    if request.session.get("date_profil"):
+        profil = request.session.get("date_profil")
+    return render(request, 'aplicatie_accesorii_pc/profil.html', {'utilizator': utilizator, 'profil': profil})
+
+def schimba_parola(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('profil')
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(request, 'aplicatie_accesorii_pc/schimba_parola.html', {'form': form})
+
+
+def editare_date(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    if request.method == 'POST':
+        form = EditareDateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            user = form.save()
+            memoreaza_date_cont(request, user)
+            return redirect('profil')
+    else:
+        form = EditareDateForm(instance=request.user)
+    return render(request, 'aplicatie_accesorii_pc/editare_date.html', {'form': form})
